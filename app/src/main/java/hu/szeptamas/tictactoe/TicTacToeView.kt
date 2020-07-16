@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import hu.szeptamas.tictactoe.TicTacToeModel.gameActive
 import kotlinx.android.synthetic.main.activity_main.view.*
 
 class TicTacToeView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -95,6 +96,9 @@ class TicTacToeView(context: Context?, attrs: AttributeSet?) : View(context, att
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (gameActive == false) {
+            return false
+        }
         if (event.action == MotionEvent.ACTION_DOWN) {
             val tX = event.x.toInt() / (width / MainActivity.boardSize)
             val tY = event.y.toInt() / (height / MainActivity.boardSize)
@@ -102,27 +106,27 @@ class TicTacToeView(context: Context?, attrs: AttributeSet?) : View(context, att
             if (tX < MainActivity.boardSize && tY < MainActivity.boardSize && TicTacToeModel.getFieldContent(tX, tY) ==
                 TicTacToeModel.State.EMPTY
             ) {
-
-                TicTacToeModel.setFieldContent(tX, tY, TicTacToeModel.getNextPlayer())
-
                 // van-e győztes
-                val winner = TicTacToeModel.checkWin(tX, tY)
-                when (winner) {
+                when (TicTacToeModel.checkWin(tX, tY)) {
                     TicTacToeModel.State.EMPTY -> {
-                        tvData.text = "It's a draw!"
+                        (context as MainActivity).showText("It's a draw!")
+                        gameActive = false
                         return true
                     }
                     TicTacToeModel.State.CIRCLE -> {
-                        tvData.text = "O wins!"
+                        (context as MainActivity).showText("O wins!")
+                        gameActive = false
                         return true
                     }
                     TicTacToeModel.State.CROSS -> {
-                        tvData.text = "X wins!"
+                        (context as MainActivity).showText("X wins!")
+                        gameActive = false
                         return true
                     }
                 }
 
                 TicTacToeModel.changeNextPlayer()
+                TicTacToeModel.setFieldContent(tX, tY, TicTacToeModel.getNextPlayer())
 
                 var next = "O"
                 if (TicTacToeModel.getNextPlayer() == TicTacToeModel.State.CROSS) {

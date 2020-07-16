@@ -1,6 +1,7 @@
 package hu.szeptamas.tictactoe
 
 import hu.szeptamas.tictactoe.MainActivity.Companion.boardSize
+import kotlin.math.pow
 
 object TicTacToeModel {
     enum class State {EMPTY, CIRCLE, CROSS}
@@ -8,6 +9,7 @@ object TicTacToeModel {
     private val board = Array(boardSize) { Array(boardSize) {State.EMPTY} }
     private var moveCount = 0
     private var nextPlayer = State.CIRCLE
+    var gameActive: Boolean = true
 
     fun resetModel() {
         for (i in 0 until boardSize) {
@@ -15,7 +17,9 @@ object TicTacToeModel {
                 board[i][j] = State.EMPTY
             }
         }
+        gameActive = true
         nextPlayer =  State.CIRCLE
+        moveCount = 0
     }
 
     fun getFieldContent(x: Int, y: Int) = board[x][y]
@@ -48,35 +52,34 @@ object TicTacToeModel {
 
         // sorok
         for (i in 0 until boardSize) {
-            if (board.get(i).get(tY) !== getFieldContent(tX, tY)) break
+            if (board[i][tY] != getFieldContent(tX, tY)) break
             if (i == boardSize - 1) {
                 return nextPlayer
             }
         }
 
-        // átlók
+        // átlók egyik irány
         if (tX == tY) {
-            // átlón vagyunk
             for (i in 0 until boardSize) {
-                if (board.get(i).get(i) !== getFieldContent(tX, tY)) break
+                if (board[i][i] != getFieldContent(tX, tY)) break
                 if (i == boardSize - 1) {
                     return nextPlayer
                 }
             }
         }
 
-//        // anti átlók
-//        if (x + y == n - 1) {
-//            for (i in 0 until n) {
-//                if (board.get(i).get(n - 1 - i) !== s) break
-//                if (i == n - 1) {
-//                    //report win for s
-//                }
-//            }
-//        }
+        // átlók másik irány
+        if (tX + tX == boardSize - 1) {
+            for (i in 0 until boardSize) {
+                if (board[i][boardSize - 1 - i] != getFieldContent(tX, tY)) break
+                if (i == boardSize - 1) {
+                    return nextPlayer
+                }
+            }
+        }
 
         // döntetlen
-        if (moveCount.toDouble() == Math.pow(boardSize.toDouble(), 2.0) - 1) {
+        if (moveCount.toDouble() == boardSize.toDouble().pow(2.0) - 1) {
             return State.EMPTY
         }
 
