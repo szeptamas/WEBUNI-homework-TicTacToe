@@ -10,11 +10,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#0E2CCD"
         android:layout_gravity="center_horizontal"
-        android:text="Welcome to TicTacToe!" />
+        android:text="Welcome to TicTacToe!"
+        android:textColor="#0E2CCD"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <hu.szeptamas.tictactoe.TicTacToeView
         android:id="@+id/ticView"
@@ -23,12 +23,12 @@
 
     <TextView
         android:id="@+id/tvData"
-        android:textSize="36sp"
-        android:textColor="#0E2CCD"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="O is the next" />
+        android:text="Next player is: O"
+        android:textColor="#0E2CCD"
+        android:textSize="24sp" />
 
     <Button
         android:id="@+id/btnReset"

@@ -8,7 +8,9 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import hu.szeptamas.tictactoe.TicTacToeModel.actualPlayer
 import hu.szeptamas.tictactoe.TicTacToeModel.gameActive
+import hu.szeptamas.tictactoe.TicTacToeModel.moveCount
 import kotlinx.android.synthetic.main.activity_main.view.*
 
 class TicTacToeView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -28,16 +30,11 @@ class TicTacToeView(context: Context?, attrs: AttributeSet?) : View(context, att
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        canvas.drawRect(
-            0f, 0f, width.toFloat(),
-            height.toFloat(), paintBackground
-        )
+        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paintBackground)
 
         drawGameArea(canvas)
-
         drawPlayers(canvas)
     }
-
 
     private fun drawGameArea(canvas: Canvas) {
         // játéktér méretének állítása
@@ -69,7 +66,6 @@ class TicTacToeView(context: Context?, attrs: AttributeSet?) : View(context, att
         )
     }
 
-
     private fun drawPlayers(canvas: Canvas) {
         for (i in 0 until MainActivity.boardSize) {
             for (j in 0 until MainActivity.boardSize) {
@@ -96,7 +92,7 @@ class TicTacToeView(context: Context?, attrs: AttributeSet?) : View(context, att
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (gameActive == false) {
+        if (!gameActive) {
             return false
         }
         if (event.action == MotionEvent.ACTION_DOWN) {
@@ -106,6 +102,9 @@ class TicTacToeView(context: Context?, attrs: AttributeSet?) : View(context, att
             if (tX < MainActivity.boardSize && tY < MainActivity.boardSize && TicTacToeModel.getFieldContent(tX, tY) ==
                 TicTacToeModel.State.EMPTY
             ) {
+                TicTacToeModel.setFieldContent(tX, tY, actualPlayer)
+                moveCount++
+
                 // van-e győztes
                 when (TicTacToeModel.checkWin(tX, tY)) {
                     TicTacToeModel.State.EMPTY -> {
@@ -126,24 +125,24 @@ class TicTacToeView(context: Context?, attrs: AttributeSet?) : View(context, att
                 }
 
                 TicTacToeModel.changeNextPlayer()
-                TicTacToeModel.setFieldContent(tX, tY, TicTacToeModel.getNextPlayer())
-
-                var next = "O"
-                if (TicTacToeModel.getNextPlayer() == TicTacToeModel.State.CROSS) {
-                    next = "X"
-                }
-                (context as MainActivity).showText("Next player is: $next")
-
+                showNextPlayer()
                 invalidate()
             }
-
         }
-
         return true
+    }
+
+    private fun showNextPlayer() {
+        (context as MainActivity).showText("Next player is: ${if (actualPlayer == TicTacToeModel.State.CIRCLE) {
+                'O'
+            } else {
+                'X'
+            }}")
     }
 
     fun resetGame() {
         TicTacToeModel.resetModel()
+        showNextPlayer()
         invalidate()
     }
 

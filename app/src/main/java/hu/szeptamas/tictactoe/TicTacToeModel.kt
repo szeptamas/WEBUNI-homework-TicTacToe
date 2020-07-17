@@ -6,9 +6,9 @@ import kotlin.math.pow
 object TicTacToeModel {
     enum class State {EMPTY, CIRCLE, CROSS}
 
-    private val board = Array(boardSize) { Array(boardSize) {State.EMPTY} }
-    private var moveCount = 0
-    private var nextPlayer = State.CIRCLE
+    private val board = Array(boardSize) { Array(boardSize) { State.EMPTY } }
+    internal var moveCount = 0
+    internal var actualPlayer = State.CIRCLE
     var gameActive: Boolean = true
 
     fun resetModel() {
@@ -18,7 +18,7 @@ object TicTacToeModel {
             }
         }
         gameActive = true
-        nextPlayer =  State.CIRCLE
+        actualPlayer =  State.CIRCLE
         moveCount = 0
     }
 
@@ -28,13 +28,9 @@ object TicTacToeModel {
         board[x][y] = content
     }
 
-    fun getNextPlayer(): State {
-        moveCount++
-        return nextPlayer
-    }
-
-    fun changeNextPlayer() {
-        nextPlayer = if (nextPlayer == State.CIRCLE) State.CROSS else State.CIRCLE
+    fun changeNextPlayer(): State {
+        actualPlayer = if (actualPlayer == State.CIRCLE) State.CROSS else State.CIRCLE
+        return actualPlayer
     }
 
     /*
@@ -46,7 +42,7 @@ object TicTacToeModel {
         for (i in 0 until boardSize) {
             if (board[tX][i] != getFieldContent(tX, tY)) break
             if (i == boardSize - 1) {
-                return nextPlayer
+                return actualPlayer
             }
         }
 
@@ -54,7 +50,7 @@ object TicTacToeModel {
         for (i in 0 until boardSize) {
             if (board[i][tY] != getFieldContent(tX, tY)) break
             if (i == boardSize - 1) {
-                return nextPlayer
+                return actualPlayer
             }
         }
 
@@ -63,23 +59,23 @@ object TicTacToeModel {
             for (i in 0 until boardSize) {
                 if (board[i][i] != getFieldContent(tX, tY)) break
                 if (i == boardSize - 1) {
-                    return nextPlayer
+                    return actualPlayer
                 }
             }
         }
 
         // átlók másik irány
-        if (tX + tX == boardSize - 1) {
+        if (tX + tY == boardSize - 1) {
             for (i in 0 until boardSize) {
                 if (board[i][boardSize - 1 - i] != getFieldContent(tX, tY)) break
                 if (i == boardSize - 1) {
-                    return nextPlayer
+                    return actualPlayer
                 }
             }
         }
 
         // döntetlen
-        if (moveCount.toDouble() == boardSize.toDouble().pow(2.0) - 1) {
+        if (moveCount.toDouble() == boardSize.toDouble().pow(2.0)) {
             return State.EMPTY
         }
 
